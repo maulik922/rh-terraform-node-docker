@@ -8,8 +8,9 @@ We will follow the three-tier architecture design. Three-tier architecture organ
 - Our application
 - Our application consists of two tiers that will be deployed to EC2 instances as Docker containers:
 
-presentation tier (webserver) — this is where the user interacts with the website
-application tier (app server) — this is where we have our business logics.
+- presentation tier (webserver) — this is where the user interacts with the website
+- application tier (app server) — this is where we have our business logics.
+
 In other words, the presentation tier forwards requests from the user to the app server, that in turn runs queries on the rds instance to fetch the lesson recordings. Our database will be a relational database with a MySQL engine just like how YouTube stores videos. Further infrastructure details will be discussed in a bit.
 
 ### Prerequisites
