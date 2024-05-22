@@ -87,9 +87,10 @@ resource "aws_launch_template" "presentation_tier" {
 
   user_data = base64encode(templatefile("./../user-data/user-data-presentation-tier.sh", {
     application_load_balancer = aws_lb.application_tier.dns_name,
-    ecr_url                   = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
+    ecr_url                   = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com",
     ecr_repo_name             = var.ecr_presentation_tier,
-    region                    = var.region
+    region                    = var.region,
+    log_group_name            = aws_cloudwatch_log_group.ec2_log_group.name
   }))
 
   depends_on = [
@@ -121,17 +122,19 @@ resource "aws_launch_template" "application_tier" {
   }
 
   user_data = base64encode(templatefile("./../user-data/user-data-application-tier.sh", {
-    rds_hostname  = aws_db_instance.rds.address,
-    rds_username  = var.rds_db_admin,
-    rds_password  = var.rds_db_password,
-    rds_port      = 3306,
-    rds_db_name   = var.db_name
-    ecr_url       = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com"
-    ecr_repo_name = var.ecr_application_tier,
-    region        = var.region
+    rds_hostname    = aws_db_instance.rds.address,
+    rds_username    = var.rds_db_admin,
+    rds_password    = var.rds_db_password,
+    rds_port        = 3306,
+    rds_db_name     = var.db_name,
+    ecr_url         = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.region}.amazonaws.com",
+    ecr_repo_name   = var.ecr_application_tier,
+    region          = var.region,
+    log_group_name  = aws_cloudwatch_log_group.ec2_log_group.name
   }))
 
   depends_on = [
     aws_nat_gateway.gw
   ]
 }
+

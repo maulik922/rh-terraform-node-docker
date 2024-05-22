@@ -1,5 +1,27 @@
 #!/bin/bash
 sudo yum update -y
+
+yum install -y awslogs
+ Configure CloudWatch Logs agent
+cat <<EOF > /etc/awslogs/awslogs.conf
+[general]
+state_file = /var/lib/awslogs/agent-state
+
+[/var/log/messages]
+log_group_name = ${log_group_name}
+log_stream_name = {instance_id}/messages
+file = /var/log/messages
+
+[/var/log/secure]
+log_group_name = ${log_group_name}
+log_stream_name = {instance_id}/secure
+file = /var/log/secure
+EOF
+
+# Start CloudWatch Logs agent
+service awslogs start
+chkconfig awslogs on
+
 sudo yum install docker -y
 sudo service docker start
 sudo systemctl enable docker
