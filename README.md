@@ -1,7 +1,7 @@
-# Project Overview
+# Project Overview 
 
 ## Architecture Diagram
-![Architecture Diagram]
+![Architecture Diagram](./architecture.png)
 
 We will follow the three-tier architecture design. Three-tier architecture organizes applications into three logical and physical computing tiers: the presentation tier (webserver), the application tier (app server), and the data tier, where the data is stored and managed.
 
