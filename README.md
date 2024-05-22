@@ -1,7 +1,7 @@
-# Project Overview
+# Project Overview 
 
 ## Architecture Diagram
-![Architecture Diagram]
+![Architecture Diagram](./architecture.png)
 
 ### Prerequisites
 - AWS CLI installed
