@@ -10,7 +10,7 @@
 - Docker installed on your local machine
 - GitHub account
 
-### ECR Login
+# ECR Login
 Before the infrastructure deployment, we will build images for these applications and push them to separate ECR (Amazon Elastic Container Registry) repositories. 
 For this, make sure you have AWS CLI installed and configured locally. We also need Docker to be running.
 
