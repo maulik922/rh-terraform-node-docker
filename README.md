@@ -111,7 +111,7 @@ Follow the prompts:
     ```sh
     ECR_APPLICATION_REPO_NAME=app-application-tier aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_APPLICATION_REPO_NAME}
 
-Then, we will do the same for the presentation tier. 
+ Then, we will do the same for the presentation tier. 
     
     ECR_PRESENTATION_REPO_NAME=app-presentation-tier aws ecr describe-repositories --repository-names ${ECR_PRESENTATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_PRESENTATION_REPO_NAME}
 
