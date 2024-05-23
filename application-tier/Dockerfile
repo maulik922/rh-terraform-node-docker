@@ -1,18 +1,16 @@
-# // Dockerfile
+FROM node:16.14.0-alpine
 
-# Select node version and set working directory
-FROM node:17-alpine
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Install app dependencies
-COPY package.json /usr/src/app
+COPY ./package.json .
+COPY ./package-lock.json .
 
-RUN npm install
+RUN npm install && npm cache clean --force
 
-# Bundle app source
-COPY . /usr/src/app
+COPY . .
 
-# Expose publc port and run npm command
-EXPOSE 3000
-CMD ["npm", "start"]
+RUN npm run build
+
+EXPOSE 4000
+
+CMD [ "npm", "start" ]

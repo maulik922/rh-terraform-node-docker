@@ -21,7 +21,7 @@ resource "aws_lb_listener" "front_end" {
 
 resource "aws_lb_target_group" "front_end" {
   name     = "front-end-lb-tg"
-  port     = 3000
+  port     = 4000
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 }
@@ -49,7 +49,7 @@ resource "aws_lb_listener" "application_tier" {
 
 resource "aws_lb_target_group" "application_tier" {
   name     = "application-tier-lb-tg"
-  port     = 3000
+  port     = 4000
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
 }
