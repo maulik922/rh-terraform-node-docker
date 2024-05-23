@@ -6,6 +6,7 @@
 
 ### Prerequisites
 - AWS CLI installed on your local machine
+- jq installed on your local machine
 - Terraform installed on your local machine
 - Docker installed on your local machine
 - GitHub account
@@ -56,3 +57,79 @@ This guide provides step-by-step instructions for installing or updating the AWS
 
     ```sh
     aws --version
+
+5.  Create IAM User and Generate Access Keys:
+
+- Go to the AWS Management Console.
+- Navigate to the IAM (Identity and Access Management) service.
+- Create a new user (e.g., readmin) with Programmatic access.
+- Attach the necessary policies to the user. For an administrator, you typically attach the AdministratorAccess policy.
+- Generate and download the access key ID and secret access key for the user.
+
+6. Configure AWS CLI
+
+Use the aws configure command to set up the new profile. Replace your-access-key-id and your-secret-access-key with the values you downloaded in the previous step, and your-region with your desired region 
+
+    aws configure
+
+Follow the prompts:
+
+    AWS Access Key ID [None]: your-access-key-id
+    AWS Secret Access Key [None]: your-secret-access-key
+    Default region name [None]: your-region
+    Default output format [None]: json
+
+7. Set the Environment Variables:
+
+    ```sh
+    export REGION=your-region
+    export ACCOUNT_ID=your-account-id
+
+# jq Installation Guide
+
+1. Install jq:
+
+    Use sudo apt-get to install jq.
+    ```sh 
+    sudo apt-get install jq
+
+2. Verify jq Installation:
+    
+    Check the version of jq to ensure it has been installed correctly.
+    ``sh
+    jq --version
+
+1. Login to ECR: replace region and AWS account ID. If you don't know where to find your account ID, please refer to this page. 
+```
+aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+```
+2. Create ECR repositories: replace ecr_application_repo_name. This cmd line describes an ecr repository if it exists. Otherwise, it creates a new repository with the name specified.
+```
+ECR_APPLICATION_REPO_NAME=app-application-tier
+aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_APPLICATION_REPO_NAME}
+```
+Then, we will do the same for the presentation tier. 
+```
+ECR_PRESENTATION_REPO_NAME=app-presentation-tier
+aws ecr describe-repositories --repository-names ${ECR_PRESENTATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_PRESENTATION_REPO_NAME}
+```
+3. Build and push the images for each tier: replace ecr_application_repo_name with the one you specified earlier. 
+```
+cd ./application-tier/
+ECR_APPLICATION_TIER_REPO=$(aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} | jq -r '.repositories[0].repositoryUri')
+docker build -t app-application-tier .
+docker tag app-application-tier:latest $ECR_APPLICATION_TIER_REPO:latest
+docker push $ECR_APPLICATION_TIER_REPO:latest
+```
+Then, let's do the same for the presentation tier. 
+```
+cd ../presentation-tier/
+ECR_PRESENTATION_TIER_REPO=$(aws ecr describe-repositories --repository-names ${ECR_PRESENTATION_REPO_NAME} | jq -r '.repositories[0].repositoryUri')
+docker build -t app-presentation-tier .
+docker tag app-presentation-tier:latest $ECR_PRESENTATION_TIER_REPO:latest
+docker push $ECR_PRESENTATION_TIER_REPO:latest
+```
+
+Now, we should navigate to the Terraform folder and run `terraform init`.
+
+We should run `terraform apply`, and type yes to approve the changes. It might take a while since we are provisioning a couple of resources. If everything goes as planned, you will get the DNS url for the front-facing load balancer.
