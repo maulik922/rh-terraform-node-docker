@@ -42,12 +42,29 @@ jobs:
       run: terraform init
       working-directory: ./terraform
 
+    # Check if state file exists. If not, create resources.
+    - name: 'Check if state file exists'
+      id: check_state_file
+      run: |
+        if [ ! -f ./terraform/terraform.tfstate ]; then
+          echo "::set-output name=state_exists::false"
+        else
+          echo "::set-output name=state_exists::true"
+        fi
+
     - name: 'Terraform Plan'
       run: terraform plan -out=tfplan
       working-directory: ./terraform
 
+    # Only apply changes if state file exists (meaning resources have been previously created).
     - name: 'Terraform Apply'
-      if: github.ref == 'refs/heads/main'
+      if: steps.check_state_file.outputs.state_exists == 'true' && github.ref == 'refs/heads/main'
+      run: terraform apply -auto-approve tfplan
+      working-directory: ./terraform
+
+    # Apply changes unconditionally if state file does not exist (first run).
+    - name: 'Terraform Apply - Initial Creation'
+      if: steps.check_state_file.outputs.state_exists != 'true' && github.ref == 'refs/heads/main'
       run: terraform apply -auto-approve tfplan
       working-directory: ./terraform
 
