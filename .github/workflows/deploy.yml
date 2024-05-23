@@ -17,23 +17,23 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v2
 
-    - name: 'Install AWS CLI'
-      run: sudo apt-get install -y awscli
-
     - name: 'Setup Terraform'
       uses: hashicorp/setup-terraform@v1
       with:
         terraform_version: 1.0.0
 
-    - name: 'Configure AWS Credentials'
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: ap-south-1
+    - name: 'Install AWS CLI'
+      run: sudo apt-get install -y awscli
 
-    - name: 'Print Environment Variables'
-      run: printenv | sort
+    - name: 'Configure AWS Credentials'
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_DEFAULT_REGION: ap-south-1
+      run: |
+        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        aws configure set region $AWS_DEFAULT_REGION
 
     - name: 'Verify AWS Credentials'
       run: aws sts get-caller-identity
