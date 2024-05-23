@@ -1,77 +1,77 @@
-name: Terraform CI/CD
+# name: Terraform CI/CD
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
+#   pull_request:
+#     branches:
+#       - main
 
-jobs:
-  terraform:
-    name: 'Terraform'
-    runs-on: ubuntu-latest
+# jobs:
+#   terraform:
+#     name: 'Terraform'
+#     runs-on: ubuntu-latest
 
-    steps:
-    - name: 'Checkout GitHub Action'
-      uses: actions/checkout@v2
+#     steps:
+#     - name: 'Checkout GitHub Action'
+#       uses: actions/checkout@v2
 
-    - name: 'Setup Terraform'
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: 1.0.0
+#     - name: 'Setup Terraform'
+#       uses: hashicorp/setup-terraform@v1
+#       with:
+#         terraform_version: 1.0.0
 
-    - name: 'Install AWS CLI'
-      run: sudo apt-get install -y awscli
+#     - name: 'Install AWS CLI'
+#       run: sudo apt-get install -y awscli
 
-    - name: 'Configure AWS Credentials'
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_DEFAULT_REGION: ap-south-1
-      run: |
-        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-        aws configure set region $AWS_DEFAULT_REGION
+#     - name: 'Configure AWS Credentials'
+#       env:
+#         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#         AWS_DEFAULT_REGION: ap-south-1
+#       run: |
+#         aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+#         aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+#         aws configure set region $AWS_DEFAULT_REGION
 
-    - name: 'Verify AWS Credentials'
-      run: aws sts get-caller-identity
+#     - name: 'Verify AWS Credentials'
+#       run: aws sts get-caller-identity
 
-    - name: 'Terraform Init'
-      run: terraform init
-      working-directory: ./terraform
+#     - name: 'Terraform Init'
+#       run: terraform init
+#       working-directory: ./terraform
 
-    # Check if state file exists. If not, create resources.
-    - name: 'Check if state file exists'
-      id: check_state_file
-      run: |
-        if [ ! -f ./terraform/terraform.tfstate ]; then
-          echo "::set-output name=state_exists::false"
-        else
-          echo "::set-output name=state_exists::true"
-        fi
+#     # Check if state file exists. If not, create resources.
+#     - name: 'Check if state file exists'
+#       id: check_state_file
+#       run: |
+#         if [ ! -f ./terraform/terraform.tfstate ]; then
+#           echo "::set-output name=state_exists::false"
+#         else
+#           echo "::set-output name=state_exists::true"
+#         fi
     
-    - name: 'Terraform destroy'
-      run: terraform destroy  --auto-approve
-      working-directory: ./terraform
+#     # - name: 'Terraform destroy'
+#     #   run: terraform destroy  --auto-approve
+#     #   working-directory: ./terraform
 
-    # - name: 'Terraform Plan'
-    #   run: terraform plan -out=tfplan
-    #   working-directory: ./terraform
+#     - name: 'Terraform Plan'
+#       run: terraform plan -out=tfplan
+#       working-directory: ./terraform
 
-    # # Only apply changes if state file exists (meaning resources have been previously created).
-    # - name: 'Terraform Apply'
-    #   if: steps.check_state_file.outputs.state_exists == 'true' && github.ref == 'refs/heads/main'
-    #   run: terraform apply -auto-approve tfplan
-    #   working-directory: ./terraform
+#     # Only apply changes if state file exists (meaning resources have been previously created).
+#     - name: 'Terraform Apply'
+#       if: steps.check_state_file.outputs.state_exists == 'true' && github.ref == 'refs/heads/main'
+#       run: terraform apply -auto-approve tfplan
+#       working-directory: ./terraform
 
-    # # Apply changes unconditionally if state file does not exist (first run).
-    # - name: 'Terraform Apply - Initial Creation'
-    #   if: steps.check_state_file.outputs.state_exists != 'true' && github.ref == 'refs/heads/main'
-    #   run: terraform apply -auto-approve tfplan
-    #   working-directory: ./terraform
+#     # Apply changes unconditionally if state file does not exist (first run).
+#     - name: 'Terraform Apply - Initial Creation'
+#       if: steps.check_state_file.outputs.state_exists != 'true' && github.ref == 'refs/heads/main'
+#       run: terraform apply -auto-approve tfplan
+#       working-directory: ./terraform
 
-    # - name: 'Terraform Validate'
-    #   run: terraform validate
-    #   working-directory: ./terraform
+#     - name: 'Terraform Validate'
+#       run: terraform validate
+#       working-directory: ./terraform

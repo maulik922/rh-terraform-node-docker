@@ -135,3 +135,15 @@ docker push $ECR_PRESENTATION_TIER_REPO:latest
 Now, we should navigate to the Terraform folder and run `terraform init`.
 
 We should run `terraform apply`, and type yes to approve the changes. It might take a while since we are provisioning a couple of resources. If everything goes as planned, you will get the DNS url for the front-facing load balancer.
+
+# Setup up Secrets and variables for run pipline 
+
+## Set Up AWS Credentials:
+
+In your GitHub repository, navigate to Settings > Secrets and variables > Actions.
+Click on New repository secret and add the following secrets:
+
+    AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY
+
+These secrets will be used by the GitHub Actions workflow to authenticate with AWS.
