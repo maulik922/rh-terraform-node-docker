@@ -52,26 +52,26 @@ jobs:
           echo "::set-output name=state_exists::true"
         fi
     
-    # - name: 'Terraform destroy'
-    #   run: terraform destroy  --auto-approve
+    - name: 'Terraform destroy'
+      run: terraform destroy  --auto-approve
+      working-directory: ./terraform
+
+    # - name: 'Terraform Plan'
+    #   run: terraform plan -out=tfplan
     #   working-directory: ./terraform
 
-    - name: 'Terraform Plan'
-      run: terraform plan -out=tfplan
-      working-directory: ./terraform
+    # # Only apply changes if state file exists (meaning resources have been previously created).
+    # - name: 'Terraform Apply'
+    #   if: steps.check_state_file.outputs.state_exists == 'true' && github.ref == 'refs/heads/main'
+    #   run: terraform apply -auto-approve tfplan
+    #   working-directory: ./terraform
 
-    # Only apply changes if state file exists (meaning resources have been previously created).
-    - name: 'Terraform Apply'
-      if: steps.check_state_file.outputs.state_exists == 'true' && github.ref == 'refs/heads/main'
-      run: terraform apply -auto-approve tfplan
-      working-directory: ./terraform
+    # # Apply changes unconditionally if state file does not exist (first run).
+    # - name: 'Terraform Apply - Initial Creation'
+    #   if: steps.check_state_file.outputs.state_exists != 'true' && github.ref == 'refs/heads/main'
+    #   run: terraform apply -auto-approve tfplan
+    #   working-directory: ./terraform
 
-    # Apply changes unconditionally if state file does not exist (first run).
-    - name: 'Terraform Apply - Initial Creation'
-      if: steps.check_state_file.outputs.state_exists != 'true' && github.ref == 'refs/heads/main'
-      run: terraform apply -auto-approve tfplan
-      working-directory: ./terraform
-
-    - name: 'Terraform Validate'
-      run: terraform validate
-      working-directory: ./terraform
+    # - name: 'Terraform Validate'
+    #   run: terraform validate
+    #   working-directory: ./terraform
