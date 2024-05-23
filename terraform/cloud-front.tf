@@ -6,10 +6,10 @@ resource "aws_s3_bucket" "bucket" {
   }
 }
 
-resource "aws_s3_bucket_acl" "bucket_acl" {
-  bucket = aws_s3_bucket.bucket.id
-  acl    = "private"
-}
+# resource "aws_s3_bucket_acl" "bucket_acl" {
+#   bucket = aws_s3_bucket.bucket.id
+#   acl    = "private"
+# }
 
 locals {
   s3_origin_id = "myS3Origin"
@@ -17,9 +17,9 @@ locals {
 
 resource "aws_cloudfront_distribution" "s3_distribution" {
   origin {
-    domain_name              = aws_s3_bucket.bucket.bucket_regional_domain_name
+    domain_name = aws_s3_bucket.bucket.bucket_regional_domain_name
     # origin_access_control_id = aws_cloudfront_origin_access_control.default.id
-    origin_id                = local.s3_origin_id
+    origin_id = local.s3_origin_id
   }
 
   enabled             = true
