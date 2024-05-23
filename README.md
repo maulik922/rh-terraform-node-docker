@@ -101,22 +101,21 @@ Follow the prompts:
 
 # Login to ECR:
 
-1. Login to ECR: replace region and AWS account ID. If you don’t know where to find your account ID.
-
-    ```sh
-    aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
-
+1. Login to ECR: replace region and AWS account ID. If you don't know where to find your account ID, please refer to this page. 
+```
+aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+```
 2. Create ECR repositories: replace ecr_application_repo_name. This cmd line describes an ecr repository if it exists. Otherwise, it creates a new repository with the name specified.
-
-    ```sh
-    ECR_APPLICATION_REPO_NAME=app-application-tier aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_APPLICATION_REPO_NAME}
-
- Then, we will do the same for the presentation tier. 
-    
-    ECR_PRESENTATION_REPO_NAME=app-presentation-tier aws ecr describe-repositories --repository-names ${ECR_PRESENTATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_PRESENTATION_REPO_NAME}
-
+```
+ECR_APPLICATION_REPO_NAME=app-application-tier
+aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_APPLICATION_REPO_NAME}
+```
+Then, we will do the same for the presentation tier. 
+```
+ECR_PRESENTATION_REPO_NAME=app-presentation-tier
+aws ecr describe-repositories --repository-names ${ECR_PRESENTATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_PRESENTATION_REPO_NAME}
+```
 3. Build and push the images for each tier: replace ecr_application_repo_name with the one you specified earlier. 
-
 ```
 cd ./application-tier/
 ECR_APPLICATION_TIER_REPO=$(aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} | jq -r '.repositories[0].repositoryUri')
