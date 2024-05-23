@@ -60,19 +60,19 @@ This guide provides step-by-step instructions for installing or updating the AWS
 
 5.  Create IAM User and Generate Access Keys:
 
-    - Go to the AWS Management Console.
-    - Navigate to the IAM (Identity and Access Management) service.
-    - Create a new user (e.g., readmin) with Programmatic access.
-    - Attach the necessary policies to the user. For an administrator, you typically attach the AdministratorAccess policy.
-    - Generate and download the access key ID and secret access key for the user.
+- Go to the AWS Management Console.
+- Navigate to the IAM (Identity and Access Management) service.
+- Create a new user (e.g., readmin) with Programmatic access.
+- Attach the necessary policies to the user. For an administrator, you typically attach the AdministratorAccess policy.
+- Generate and download the access key ID and secret access key for the user.
 
 6. Configure AWS CLI
 
-    Use the aws configure command to set up the new profile. Replace your-access-key-id and your-secret-access-key with the values you downloaded in the previous step, and your-region with your desired region 
+Use the aws configure command to set up the new profile. Replace your-access-key-id and your-secret-access-key with the values you downloaded in the previous step, and your-region with your desired region 
 
     aws configure
 
-    Follow the prompts:
+Follow the prompts:
 
     AWS Access Key ID [None]: your-access-key-id
     AWS Secret Access Key [None]: your-secret-access-key
@@ -99,21 +99,24 @@ This guide provides step-by-step instructions for installing or updating the AWS
     ``sh
     jq --version
 
-1. Login to ECR: replace region and AWS account ID. If you don't know where to find your account ID, please refer to this page. 
-```
-aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
-```
+# Login to ECR:
+
+1. Login to ECR: replace region and AWS account ID. If you don’t know where to find your account ID.
+
+    ```sh
+    aws ecr get-login-password --region ${REGION} | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${REGION}.amazonaws.com
+
 2. Create ECR repositories: replace ecr_application_repo_name. This cmd line describes an ecr repository if it exists. Otherwise, it creates a new repository with the name specified.
-```
-ECR_APPLICATION_REPO_NAME=app-application-tier
-aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_APPLICATION_REPO_NAME}
-```
-Then, we will do the same for the presentation tier. 
-```
-ECR_PRESENTATION_REPO_NAME=app-presentation-tier
-aws ecr describe-repositories --repository-names ${ECR_PRESENTATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_PRESENTATION_REPO_NAME}
-```
+
+    ```sh
+    ECR_APPLICATION_REPO_NAME=app-application-tier aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_APPLICATION_REPO_NAME}
+
+Then, we will do the same for the presentation tier. 
+    
+    ECR_PRESENTATION_REPO_NAME=app-presentation-tier aws ecr describe-repositories --repository-names ${ECR_PRESENTATION_REPO_NAME} || aws ecr create-repository --repository-name ${ECR_PRESENTATION_REPO_NAME}
+
 3. Build and push the images for each tier: replace ecr_application_repo_name with the one you specified earlier. 
+
 ```
 cd ./application-tier/
 ECR_APPLICATION_TIER_REPO=$(aws ecr describe-repositories --repository-names ${ECR_APPLICATION_REPO_NAME} | jq -r '.repositories[0].repositoryUri')
