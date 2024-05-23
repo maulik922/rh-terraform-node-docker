@@ -29,6 +29,9 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ap-south-1  # Update to your desired AWS region
 
+    - name: 'Verify AWS Credentials'
+      run: aws sts get-caller-identity
+
     - name: 'Terraform Init'
       run: terraform init
 
